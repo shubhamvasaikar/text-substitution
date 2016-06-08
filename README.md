@@ -8,7 +8,7 @@ pip install yandex.translate
 
 ```bash
 Usage:
-textsub.py [option] <argument>
+python textsub.py [option] <argument>
 Options:
 --extract-text - extract text from the sample html file and generate a .properties file.
 --generate-resource <language-code> - genearate the translated .properties file in the language specified by "language-code".
