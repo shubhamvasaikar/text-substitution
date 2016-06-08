@@ -28,21 +28,21 @@ def main():
     (abc, b) = opts[0]
     class myparser(HTMLParser):
                     
-        def handle_data(self, data):
+        def handle_data(self, data):        # Override method of HTMLParser
             if abc == '--extract-text':
-                data = data.lstrip();
-                data = data.rstrip();
+                data = data.lstrip();       # Strip all unwanted 
+                data = data.rstrip();       # whitespace in HTML File.
                 if data != '':
-                    hash_object = hashlib.md5(data.encode())
+                    hash_object = hashlib.md5(data.encode())        # Create an MD5 hash of the text segment.
                     f1 = open('example.properties', mode='a')
-                    f1.write(hash_object.hexdigest() + "=" + data + "\n")
+                    f1.write(hash_object.hexdigest() + "=" + data + "\n")       # Write hash and data into file.
             elif abc == '--display-html':
                 data = data.lstrip();
                 data = data.rstrip();
                 if data != '':
                     hash_object = hashlib.md5(data.encode())
-                    rep = tran_dict[hash_object.hexdigest()]
-                    self.newdata = self.newdata.replace(data, rep)                
+                    rep = tran_dict[hash_object.hexdigest()]        # Retrieve translated string corresponding to the hash of original data.
+                    self.newdata = self.newdata.replace(data, rep)      # Replace original text with translated text                
         
     for o, a in opts:
         if o == "--extract-text":
@@ -53,6 +53,8 @@ def main():
             f = open('sample.html')
             data = f.read()
             parser.feed(data)
+            f1.close()
+            f.close()
 
         elif o == "--generate-resource":
             translate = YandexTranslate('trnsl.1.1.20160607T100954Z.0329b17b7e667944.3b9682b4988dfe500b80d3d23a867954d107ed6c')
@@ -69,12 +71,16 @@ def main():
                 
                 f2 = open(name, mode='a');
                 res = translate.translate(val, a)
-                out = str(res['text'])
-                out = out.strip('[]')
-                out = out.lstrip("'")
-                out = out.rstrip("'")
+                out = str(res['text'])      
+                out = out.strip('[]')       # Strip all unwanted
+                out = out.lstrip("'")       # characters returned by
+                out = out.rstrip("'")       # Yandex.Translate
                 out = out.strip("\\n")
                 f2.write(key + "=" + str(out) + "\n")
+                
+            f.close()
+            f1.close()
+            f2.close()
                 
         elif o == "--display-html":
             data_dict = {}
@@ -82,13 +88,13 @@ def main():
                 name = f3.read()
             with open('example.properties') as f4:
                 for line in f4:
-                    (key, val) = line.split('=')
+                    (key, val) = line.split('=')        # Create a dictionary from properties file.
                     data_dict[key] = val
                       
             tran_dict = {}
             with open(name) as f5:
                 for line in f5:
-                    (key, val) = line.split('=')
+                    (key, val) = line.split('=')        # Create a dictionary from properties file.
                     tran_dict[key] = val
             
             infile = open('sample.html', 'r');
@@ -102,6 +108,8 @@ def main():
             
             with open('sample.translated.html', 'w') as file:
                 file.write(parser.newdata)
+                
+            infile.close()
                 
         elif o == "--help":
             usage()
